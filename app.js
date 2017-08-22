@@ -119,7 +119,7 @@ io.on('connection', function (client) {
     });
 
     client.on('messages', function (data) {
-        console.log(JSON.parse(data));
+        console.log(data);
 
         // var newLocation = new Locations(JSON.parse(data));
         // newLocation.save(function (err) {
