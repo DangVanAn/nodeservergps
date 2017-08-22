@@ -98,45 +98,21 @@
 //////////////////////////////////////////////////////////////////////////////////
 const express = require('express');
 const socketIO = require('socket.io');
+const path = require('path');
 
 const PORT = process.env.PORT || 3000;
+const INDEX = path.join(__dirname, 'index.html');
 
 const server = express()
-    .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+    .use((req, res) => res.sendFile(INDEX) )
+.listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
 const io = socketIO(server);
 
-// io.on('connection', (socket) => {
-//     console.log('Client connected');
-// socket.on('disconnect', () => console.log('Client disconnected'));
-// });
-
-io.on('connection', function (client) {
-    console.log('Client connected...');
-
-    client.on('join', function (data) {
-
-        client.join('room1');
-        console.log(data);
-    });
-
-    client.on('messages', function (data) {
-        console.log(JSON.parse(data));
-
-        // var newLocation = new Locations(JSON.parse(data));
-        // newLocation.save(function (err) {
-        //     if (err) {
-        //         console.log('Location error!');
-        //     }
-        //     else {
-        //         console.log('Location created!');
-        //     }
-        // });
-
-        //Dòng này có tác dụng trả thông tin về những client trong room1
-        // Nếu mất comment đi, thì client chỉ có gửi, chứ không có nhận, như vậy sẽ nhanh hơn.
-        client.broadcast.to('room1').emit('broad', data);
-    });
+io.on('connection', (socket) => {
+    console.log('Client connected');
+socket.on('disconnect', () => console.log('Client disconnected'));
 });
 
+setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
 // setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
